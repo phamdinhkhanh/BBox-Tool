@@ -49,4 +49,31 @@ It support variety of bounding box types: Pascal VOC and YOLO darknet simple for
 Friendly graphic:
 ![Label Image](./labelImage.jpg)
 
+# 3. Convert into YOLO
+
+Label should be formated into `<object-id> <x-center-ratio> <y-center-ratio> <width-ratio> <height-ratio>` that is standardize image scale of coordinate as bellow formula: 
+
+x-center-ration = x-center/img-width
+
+y-center-ration = y-center/img-height
+
+width-ratio = bbox-width/img-width
+
+height-ratio = bbox-height/img-height
+
+
+Run code on:
+
+`py convert.py`
+
+Param should be modified inside `convert.py`:
+
+`""" Configure Paths"""   
+classes = ["005"]
+mypath = "Labels/005/"
+outpath = "Labels/005_std/"
+imgpath = "Images/005"
+cls = "005"`
+
+
 
