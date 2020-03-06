@@ -53,6 +53,9 @@ class LabelTool():
         self.hl = None
         self.vl = None
 
+        # reference to class
+        self.bboxClass = []
+
         # Delare extension files:
         self.extensions = ["*.JPEG", "*.PNG", "*.JPG"]
 
@@ -85,16 +88,25 @@ class LabelTool():
         # showing bbox info & delete bbox
         self.lb1 = Label(self.frame, text = 'Bounding boxes:')
         self.lb1.grid(row = 1, column = 2,  sticky = W+N)
+        # self.lb2.grid(row = 1, column = 2,  sticky = W+N)
         self.listbox = Listbox(self.frame, width = 22, height = 12)
         self.listbox.grid(row = 2, column = 2, sticky = N)
+        self.lb2 = Label(self.frame, text = "Classes:")
+        self.lb2.grid(row = 3, column = 2,  sticky = W+N)
+        self.listbox2 = Listbox(self.frame, width = 22, height = 2)
+        self.listbox2.grid(row = 4, column = 2, sticky = N)
+        self.lb3 = Label(self.frame, text = "FileName:")
+        self.lb3.grid(row = 5, column = 2,  sticky = W+N)
+        self.listbox3 = Listbox(self.frame, width = 22, height = 2)
+        self.listbox3.grid(row = 6, column = 2, sticky = N)
         self.btnDel = Button(self.frame, text = 'Delete', command = self.delBBox)
-        self.btnDel.grid(row = 3, column = 2, sticky = W+E+N)
+        self.btnDel.grid(row = 7, column = 2, sticky = W+E+N)
         self.btnClear = Button(self.frame, text = 'ClearAll', command = self.clearBBox)
-        self.btnClear.grid(row = 4, column = 2, sticky = W+E+N)
+        self.btnClear.grid(row = 8, column = 2, sticky = W+E+N)
 
         # control panel for image navigation
         self.ctrPanel = Frame(self.frame)
-        self.ctrPanel.grid(row = 5, column = 1, columnspan = 2, sticky = W+E)
+        self.ctrPanel.grid(row = 9, column = 1, columnspan = 2, sticky = W+E)
         self.prevBtn = Button(self.ctrPanel, text='<< Prev', width = 10, command = self.prevImage)
         self.prevBtn.pack(side = LEFT, padx = 5, pady = 3)
         self.nextBtn = Button(self.ctrPanel, text='Next >>', width = 10, command = self.nextImage)
@@ -212,6 +224,8 @@ class LabelTool():
         bbox_cnt = 0
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
+                self.listbox2.delete('0',END)
+                self.listbox3.delete('0', END)
                 for (i, line) in enumerate(f):
                 	# Take label
                     if i == 0:
@@ -234,12 +248,16 @@ class LabelTool():
                     self.bboxIdList.append(tmpId)
                     self.listbox.insert(END, '(%d, %d) -> (%d, %d)' %(tmp[0], tmp[1], tmp[2], tmp[3]))
                     self.listbox.itemconfig(len(self.bboxIdList) - 1, fg = COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
+                self.listbox2.insert(END, bbox_cnt)
+                self.listbox3.insert(END, self.labelfilename)
 
     def saveImage(self):
 	    print('labelfilename: {}'.format(self.labelfilename))
 	    with open(self.labelfilename, 'w') as f:
 	    	print("bboxList: ", self.bboxList)
-	    	f.write('%d\n' %len(self.bboxList))
+	    	# Write classes its belong to
+	    	# f.write('%d\n' %len(self.bboxList))
+	    	f.write('%d\n' %self.category)
 	    	for bbox in self.bboxList:
 	            f.write(' '.join(map(str, bbox)) + '\n')
 	    print ('Image No. %d saved' %(self.cur))
